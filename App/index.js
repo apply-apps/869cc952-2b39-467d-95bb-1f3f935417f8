@@ -2,15 +2,17 @@
 // Combined code from all files
 
 import React from 'react';
-import { SafeAreaView, StyleSheet, Text, FlatList, Image, View, TouchableOpacity } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, FlatList, Image, TouchableOpacity, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+
+const Stack = createStackNavigator();
 
 const stories = Array.from({ length: 100 }, (_, index) => ({
   id: `${index + 1}`,
   title: `Story ${index + 1}`,
   imageUrl: `https://picsum.photos/200/300?random=${index + 1}`,
-  content: `This is the content of story ${index + 1}. Once upon a time...`
+  content: `This is the content of story ${index + 1}. Once upon a time...`,
 }));
 
 const StoryList = ({ navigation }) => {
@@ -35,7 +37,7 @@ const StoryList = ({ navigation }) => {
 
 const StoryScreen = ({ route }) => {
   const { story } = route.params;
-  
+
   return (
     <View style={styles.storyScreen}>
       <Image source={{ uri: story.imageUrl }} style={styles.fullImage} />
@@ -44,9 +46,7 @@ const StoryScreen = ({ route }) => {
   );
 };
 
-const App = () => {
-  const Stack = createStackNavigator();
-
+export default function App() {
   return (
     <SafeAreaView style={styles.container}>
       <NavigationContainer>
@@ -57,47 +57,43 @@ const App = () => {
       </NavigationContainer>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   list: {
     alignItems: 'center',
-    padding: 20
   },
   storyItem: {
-    margin: 15,
-    alignItems: 'center'
+    margin: 10,
+    alignItems: 'center',
   },
   storyImage: {
     width: 200,
     height: 300,
-    borderRadius: 10
+    borderRadius: 10,
   },
   storyTitle: {
     fontSize: 18,
     marginTop: 10,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   storyScreen: {
     flex: 1,
     alignItems: 'center',
-    paddingTop: 20,
-    paddingHorizontal: 20
+    padding: 20,
   },
   fullImage: {
     width: '100%',
     height: 300,
     borderRadius: 10,
-    marginBottom: 20
+    marginBottom: 20,
   },
   storyContent: {
     fontSize: 16,
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 });
-
-export default App;
