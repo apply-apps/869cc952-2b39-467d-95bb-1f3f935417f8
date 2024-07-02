@@ -1,53 +1,103 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+// Filename: index.js
+// Combined code from all files
 
-const App = () => {
-  const fullText = 'Hi, this is Apply.\nCreating mobile apps is now as simple as typing text.\nJust input your idea and press APPLY, and our platform does the rest...';
-  const [displayedText, setDisplayedText] = useState('');
-  const [index, setIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
+import React from 'react';
+import { SafeAreaView, StyleSheet, Text, FlatList, Image, View, TouchableOpacity } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
-  useEffect(() => {
-    if (isPaused) return;
+const stories = Array.from({ length: 100 }, (_, index) => ({
+  id: `${index + 1}`,
+  title: `Story ${index + 1}`,
+  imageUrl: `https://picsum.photos/200/300?random=${index + 1}`,
+  content: `This is the content of story ${index + 1}. Once upon a time...`
+}));
 
-    const interval = setInterval(() => {
-      setDisplayedText((prev) => prev + fullText[index]);
-      setIndex((prev) => {
-        if (prev === fullText.length - 1) {
-          setIsPaused(true);
-          setTimeout(() => {
-            setDisplayedText('');
-            setIndex(0);
-            setIsPaused(false);
-          }, 2000);
-          return 0;
-        }
-        return prev + 1;
-      });
-    }, 100);
-
-    return () => clearInterval(interval);
-  }, [index, isPaused]);
+const StoryList = ({ navigation }) => {
+  const renderItem = ({ item }) => (
+    <TouchableOpacity onPress={() => navigation.navigate('Story', { story: item })}>
+      <View style={styles.storyItem}>
+        <Image source={{ uri: item.imageUrl }} style={styles.storyImage} />
+        <Text style={styles.storyTitle}>{item.title}</Text>
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>{displayedText}</Text>
+    <FlatList
+      data={stories}
+      renderItem={renderItem}
+      keyExtractor={(item) => item.id}
+      contentContainerStyle={styles.list}
+    />
+  );
+};
+
+const StoryScreen = ({ route }) => {
+  const { story } = route.params;
+  
+  return (
+    <View style={styles.storyScreen}>
+      <Image source={{ uri: story.imageUrl }} style={styles.fullImage} />
+      <Text style={styles.storyContent}>{story.content}</Text>
     </View>
+  );
+};
+
+const App = () => {
+  const Stack = createStackNavigator();
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen name="Home" component={StoryList} options={{ title: 'Bedtime Stories' }} />
+          <Stack.Screen name="Story" component={StoryScreen} options={{ title: 'Story' }} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    backgroundColor: 'black',
-    padding: 20,
+    backgroundColor: '#fff'
   },
-  text: {
-    color: 'white',
-    fontSize: 24,
-    fontFamily: 'monospace',
+  list: {
+    alignItems: 'center',
+    padding: 20
   },
+  storyItem: {
+    margin: 15,
+    alignItems: 'center'
+  },
+  storyImage: {
+    width: 200,
+    height: 300,
+    borderRadius: 10
+  },
+  storyTitle: {
+    fontSize: 18,
+    marginTop: 10,
+    textAlign: 'center'
+  },
+  storyScreen: {
+    flex: 1,
+    alignItems: 'center',
+    paddingTop: 20,
+    paddingHorizontal: 20
+  },
+  fullImage: {
+    width: '100%',
+    height: 300,
+    borderRadius: 10,
+    marginBottom: 20
+  },
+  storyContent: {
+    fontSize: 16,
+    textAlign: 'center'
+  }
 });
 
 export default App;
